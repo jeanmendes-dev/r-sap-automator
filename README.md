@@ -51,3 +51,19 @@ install.packages(c(
   "rmarkdown", "officedown", "flextable", "officer",
   "dplyr", "ggplot2", "knitr"
 ))
+```
+### Generate Your SAP
+ - Open `sap_template.Rmd` in RStudio
+ - Edit `study_params` in the setup chunk (lines 10–20)
+   
+```r
+study_params <- list(
+  study_name = "Your Study Name",
+  sponsor = "Your Sponsor",
+  protocol_number = "PROT-123",
+  primary_endpoint = "Change in HbA1c at Week 24",
+  sample_size = 350,
+  ...
+)
+```
+ - Click Knit → Generates sap_template.docx in your working directory.
