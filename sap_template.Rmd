@@ -1,0 +1,476 @@
+---
+title: "Statistical Analysis Plan (SAP)"
+date: "`r Sys.Date()`"
+output: 
+  officedown::rdocx_document:
+    toc: true
+    toc_depth: 3
+geometry: margin=2cm
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{booktabs}
+  - \usepackage{caption}
+  - \usepackage{longtable}
+  - \usepackage{setspace}
+  - \setstretch{1.15}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(officer)
+library(flextable)
+library(dplyr)
+library(knitr)
+library(officedown)
+library(ggplot2)
+library(scales)
+
+# Função auxiliar para criar tabelas flexíveis
+create_flextable <- function(df, caption = "") {
+  ft <- flextable(df) %>%
+    theme_zebra() %>%
+    autofit() %>%
+    set_caption(caption = caption, style = "Table Caption") %>%
+    align(align = "center", part = "all")
+  return(ft)
+}
+
+# Parâmetros do estudo
+study_params <- list(
+  study_name = "Clinical Study XYZ",
+  sponsor = "ABC Pharmaceutical Company",
+  protocol_number = "XYZ-001",
+  population = "Patients with Type 2 Diabetes",
+  primary_endpoint = "Reduction in HbA1c at Week 24",
+  secondary_endpoints = c("Weight Loss", "Hypoglycemia Rate"),
+  sample_size = 300,
+  alpha = 0.05,
+  power = 0.90,
+  phase = "Phase III",
+  investigational_product = "Drug X (Indication: Type 2 Diabetes)",
+  lead_biostatistician = "Dr. Jean Mendes",
+  supporting_statisticians = "John Smith, Maria Garcia",
+  statistical_programmers = "Team A",
+  quality_reviewers = "QA Team",
+  protocol_version = "v1.0",
+  sap_version = "v1.0",
+  sap_date = "2025-11-25"
+)
+```
+
+# General Information
+
+<br>
+
+## Study Identification
+
+**Study title:** `r study_params$study_name`  
+
+**Protocol number:** `r study_params$protocol_number` 
+
+**SAP version and date:** `r study_params$sap_version` (as of `r study_params$sap_date`)
+
+**Investigational product / indication:** `r study_params$investigational_product` 
+
+**Study phase:** `r study_params$phase`
+
+<br>
+
+## Responsibilities
+
+**Lead biostatistician:** `r study_params$lead_biostatistician`
+
+**Supporting statisticians:** `r study_params$supporting_statisticians`
+
+**Statistical programmers:** `r study_params$statistical_programmers`
+
+**Quality reviewers:** `r study_params$quality_reviewers`
+
+**Signature page (approval):** To be completed upon final review.
+
+<br>
+
+## Reference Documents
+
+Study protocol and amendments
+
+CRF (Case Report Form)
+
+Investigator’s Brochure
+
+Data Management Plan (DMP)
+
+TLF shells (Tables, Listings, Figures)
+
+Randomization plan
+
+Coding dictionaries (e.g., MedDRA, WHO-Drug)
+
+<br>
+
+# Study Objectives and Endpoints
+
+<br>
+
+## Objectives
+
+**Primary objective:** To evaluate the efficacy of Drug X in reducing HbA1c levels in patients with Type 2 Diabetes after 24 weeks of treatment.
+
+**Secondary objectives:** To assess weight loss and incidence of hypoglycemic episodes.
+
+**Exploratory objectives:** Not applicable for this analysis.
+
+<br>
+
+## Endpoints
+
+**Primary endpoint:** Reduction in HbA1c at Week 24 (continuous, % change from baseline).
+
+**Secondary endpoints:** Weight loss (kg), Hypoglycemia rate (number of events).
+
+**Exploratory endpoints:** Not applicable.
+
+**Operational definition and units of measurement:** See Section 6.1.
+
+# Analysis Populations (Analysis Sets)
+
+<br>
+
+Defined according to ICH E9 consistency requirements.
+
+## Full Analysis Set / ITT Population
+All randomized participants.
+
+<br>
+
+## Per Protocol Population
+Participants who completed the study without major protocol deviations.
+
+<br>
+
+## Safety Population
+All participants exposed to the investigational product.
+
+<br>
+
+## Additional populations
+Not applicable.
+
+<br>
+
+```{r populations}
+populations <- data.frame(
+  Population = c("ITT (Intention-to-Treat)", "PP (Per Protocol)", "Safety"),
+  Description = c("All randomized participants", "Participants who completed the study without major violations", "All participants exposed to the treatment")
+)
+create_flextable(populations, caption = "Table 1: Analysis Populations")
+```
+
+<br>
+
+# Randomization and Blinding
+
+<br>
+
+## Randomization
+
+- Method (block, stratified, minimization)  
+- Software and seed  
+- Stratification factors  
+- Randomization schedule handling  
+- Concealment procedures
+
+<br>
+
+## Blinding
+
+- Who remains blinded  
+- Role-based access  
+- Unblinding procedures  
+- Emergency unblinding rules
+
+<br>
+
+# Sample Size and Power Justification
+
+<br>
+
+As required by ICH E9:
+
+- Statistical assumptions used  
+- Effect size and variability assumptions  
+- Sample size calculations  
+- Planned drop-out rate  
+- Power curve if applicable  
+- Impact of assumptions on study integrity
+
+<br>
+
+# Data Specifications
+
+<br>
+
+## Variable Definitions
+
+- Type (continuous, categorical, ordinal, time-to-event)  
+- Derivation rules  
+- Units and reference ranges  
+- Handling of baseline measurements
+
+<br>
+
+## Data Derivation Rules
+
+- Visit windowing rules  
+- Date imputations (partial dates)  
+- Exposure calculations  
+- Derivation of TEAEs (treatment-emergent AEs)  
+- Handling of concomitant medications  
+- Prior/concomitant therapy derivation  
+- Calculation of change from baseline
+
+<br>
+
+## Missing Data Handling
+
+<br>
+
+Consistent with ICH E9 principles:
+
+- Handling mechanism assumptions  
+- Imputation methods
+
+  - LOCF  
+  - MMRM  
+  - Multiple imputation  
+- Sensitivity analyses  
+- Justification for chosen approach
+
+<br>
+
+# Statistical Methods
+
+<br>
+
+## Primary Endpoint Analysis
+
+- Statistical model  
+- Covariates  
+- Adjusted vs unadjusted models  
+- Hypothesis testing framework  
+- Confidence intervals  
+- Significance level (usually α = 0.05)  
+- Model assumptions and diagnostics  
+- Primary analysis + sensitivity analyses
+
+<br>
+
+## Secondary Endpoint Analyses
+
+- Appropriate methods for endpoint type:  
+  - Continuous → ANCOVA, MMRM  
+  - Binary → Logistic regression  
+  - Count data → Poisson/negative binomial  
+  - Time-to-event → Kaplan-Meier, Cox model  
+- Adjustment for multiplicity if required
+
+<br>
+
+## Multiplicity Adjustment
+
+ICH E9 requires pre-specification. Options:
+
+- Hierarchical testing  
+- Bonferroni/Holm/Hochberg  
+- Gatekeeping procedures  
+- FWER control  
+- False Discovery Rate where applicable
+
+<br>
+
+## Interim Analyses
+
+If applicable:
+
+- Timing  
+- DMC (Data Monitoring Committee) responsibilities  
+- Statistical boundaries  
+  - O’Brien–Fleming  
+  - Pocock  
+- Alpha-spending function  
+- Impact on overall Type I error
+
+<br>
+
+## Subgroup Analyses
+
+- Pre-defined only  
+- Interaction tests  
+- Forest plots  
+- Clinical justification
+
+<br>
+
+# Safety Analyses
+
+<br>
+
+## Adverse Events (AEs)
+
+- MedDRA coding approach  
+- Definitions:  
+  - TEAE  
+  - SAE  
+  - AESI (Adverse Event of Special Interest)  
+- Calculations:  
+  - n (%)  
+  - Incidence rates  
+  - Exposure-adjusted incidence rate
+
+<br>
+
+## Laboratory Parameters
+
+- Shift tables (normal → abnormal)  
+- Potentially clinically significant abnormalities (PCSA)  
+- Change from baseline summaries  
+- Outlier detection
+
+<br>
+
+## Vital Signs, ECG, Physical Exams
+
+<br>
+
+## Concomitant Medications
+
+- WHO-Drug coding  
+- Classification by ATC system
+
+<br>
+
+# PK/PD Analyses (if applicable)
+
+- PK population definition  
+- Non-compartmental analysis (AUC, Cmax)  
+- Compartmental modeling  
+- Covariate analysis  
+- PD markers and correlations
+
+<br>
+
+# Protocol Deviations
+
+- Definition of deviations  
+- Mapping rules  
+- Major protocol deviations and their impact on populations  
+- Documentation and QC
+
+<br>
+
+# Tables, Listings, and Figures (TLFs)
+
+<br>
+
+Provide shells (mockups), including:
+
+- Demographics  
+- Subject disposition  
+- Exposure  
+- Efficacy analyses  
+- Safety analyses  
+- PK/PD  
+- Protocol deviations
+
+<br>
+
+Each shell must define:  
+
+- Denominators and numerators  
+- Missing data handling  
+- Units and precision  
+- Layout and format  
+- Population used
+
+<br>
+
+```{r demo_table}
+demo_data <- data.frame(
+  Group = c("Treatment", "Placebo"),
+  Age_Mean = c(58.2, 57.9),
+  Female_Percent = c("52%", "49%"),
+  BMI_Mean = c(31.5, 31.2)
+)
+create_flextable(demo_data, caption = "Table 2: Summary of Demographic Characteristics")
+```
+
+<br>
+
+```{r plot_example, echo=FALSE, fig.cap="Distribution of Baseline HbA1c by Treatment Group"}
+set.seed(123)
+data_plot <- data.frame(
+  Group = rep(c("Treatment", "Placebo"), each = 150),
+  HbA1c_Baseline = c(rnorm(150, mean = 8.5, sd = 1.2), rnorm(150, mean = 8.4, sd = 1.1))
+)
+
+ggplot(data_plot, aes(x = Group, y = HbA1c_Baseline, fill = Group)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Baseline HbA1c Distribution by Treatment Group",
+       x = "Treatment Group",
+       y = "HbA1c (%)") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set2")
+```
+
+<br>
+
+```{r safety_table, echo=FALSE}
+# Tabela de eventos adversos
+safety_data <- data.frame(
+  Event = c("Nausea", "Headache", "Dizziness", "Fatigue"),
+  Treatment_n = c(15, 12, 8, 20),
+  Placebo_n = c(8, 10, 5, 15),
+  Treatment_pct = c("10.0%", "8.0%", "5.3%", "13.3%"),
+  Placebo_pct = c("5.3%", "6.7%", "3.3%", "10.0%")
+)
+create_flextable(safety_data, caption = "Table 3: Summary of Common Adverse Events (≥5% in any group)")
+```
+
+<br>
+
+# Quality Assurance
+
+<br>
+
+- QC of statistical programming  
+- Independent review  
+- Version control  
+- Audit trail requirements  
+- Validation of ADaM datasets  
+- Programming standards (e.g., CDISC)
+
+# Post-Protocol Changes
+
+<br>
+
+ICH E9 requires transparency for changes made after protocol finalization:
+
+- Justification  
+- Impact assessment  
+- Documentation and timing
+
+<br>
+
+# References
+
+<br>
+
+Include:
+
+- ICH E9  
+- ICH E6 (Good Clinical Practice)  
+- FDA/EMA statistical guidance  
+- CDISC SDTM/ADaM standards  
+- MedDRA and WHO-Drug  
+- Relevant methodological literature
